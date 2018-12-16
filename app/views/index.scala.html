@@ -1,0 +1,43 @@
+@()(implicit messageRequestHeader: MessagesRequestHeader)
+
+@main {
+
+
+<div></div>
+<input type="text" name="message" placeholder="enter your message"/>
+
+
+
+<script type="text/javascript" charset="UTF-8">
+    var user = prompt('Enter your name:')
+
+   $('input').on( "keypress", function(e){
+   if (e.keyCode != 13)
+   return;
+   var m={message:this.value, user:user};
+   this.value="";
+   $.ajax({
+   type: "POST",
+   url: "@routes.HomeController.inputToChannel()",
+   data: JSON.stringify(m),
+   contentType:"application/json",
+   });
+   } );
+
+
+    var eventSource= new EventSource('@routes.HomeController.pushStream()');
+    eventSource.onmessage=function(e){
+    var ms = JSON.parse(e.data)
+    $('div').append('<p>'+ms.user+': '+ms.message+'</p>');
+    }
+
+</script>
+
+
+
+
+
+
+
+
+}
